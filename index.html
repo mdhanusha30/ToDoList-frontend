@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 Colorful To-Do List</title>
+  <style>
+    /* Background gradient */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Card container */
+    .card {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #ff6b6b;
+      margin-bottom: 20px;
+    }
+
+    input {
+      padding: 10px;
+      width: 70%;
+      border: 2px solid #ff6b6b;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      outline: none;
+      font-size: 1rem;
+    }
+
+    input:focus {
+      border-color: #4ecdc4;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      background: #4ecdc4;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #ff6b6b;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f7f7f7;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      font-weight: 500;
+    }
+
+    li button {
+      padding: 5px 8px;
+      background: #ff6b6b;
+      color: #fff;
+      font-weight: normal;
+    }
+
+    li button:hover {
+      background: #4ecdc4;
+    }
+
+    .small {
+      font-size: 0.85rem;
+      color: #777;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>📝 Colorful To-Do List</h2>
+
+    <input id="taskInput" type="text" placeholder="Enter a task">
+    <div>
+      <button id="addBtn">Add Task</button>
+      <button id="viewBtn">View Tasks</button>
+      <button id="exitBtn">Exit</button>
+    </div>
+
+    <ul id="taskList"></ul>
+    <div class="small">Tip: Tasks are saved in your browser (persistent).</div>
+  </div>
+
+  <script>
+    const input = document.getElementById('taskInput');
+    const addBtn = document.getElementById('addBtn');
+    const viewBtn = document.getElementById('viewBtn');
+    const exitBtn = document.getElementById('exitBtn');
+    const list = document.getElementById('taskList');
+
+    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+
+    function render() {
+      list.innerHTML = '';
+      tasks.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.textContent = t;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '❌';
+        removeBtn.onclick = () => {
+          tasks.splice(i,1);
+          saveAndRender();
+        };
+        li.appendChild(removeBtn);
+        list.appendChild(li);
+      });
+    }
+
+    function saveAndRender() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      render();
+    }
+
+    addBtn.onclick = () => {
+      const val = input.value.trim();
+      if(!val) return alert('Please enter a task!');
+      tasks.push(val);
+      input.value = '';
+      saveAndRender();
+    }
+
+    viewBtn.onclick = () => {
+      if(tasks.length === 0) alert('No tasks yet!');
+      else alert('Your tasks:\n' + tasks.map((t,i) => `${i+1}. ${t}`).join('\n'));
+    }
+
+    exitBtn.onclick = () => {
+      document.body.innerHTML = '<h2 style="text-align:center; margin-top:50px;">👋 Goodbye!</h2>';
+    }
+
+    render();
+  </script>
+</body>
+</html>
